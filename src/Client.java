@@ -5,7 +5,9 @@ import java.util.Scanner;
 public class Client {
     public static void main(String [] args ) {
         String address = "127.0.0.1";
-        String nameDefault = "GigaChad";
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Client pseudo: ");
+        String nameDefault = scanner.nextLine();
         int idClient;
         try {// Open sockets and streams
             Socket sock = new Socket(address,10000);
@@ -19,9 +21,11 @@ public class Client {
             System.out.println("Player n°: "+idClient);
 
             String message="";
-            Scanner scanner = new Scanner(System.in);
+
             while(!message.equals("end")){
+                System.out.print("--> ");
                 message = scanner.nextLine();
+
                 out.writeUTF(message);
             }
             System.out.println("Chat closed.");
