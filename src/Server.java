@@ -19,12 +19,15 @@ public class Server implements Runnable {
     /**
      * Total number of worker thread to be created.
      */
-    private static final int nThread = 2;
+    private static final int nThread = 1;
 
     /**
      * Array of the threads.
      */
     private static Thread[] clientThread = new Thread[nThread];
+
+    private static Socket[] sockets = new Socket[nThread];
+    private static DataOutputStream[] outs = new DataOutputStream[nThread];
     /**
      * Chat box built in a GUI.
      * see {@code ChatGUI}
@@ -44,16 +47,17 @@ public class Server implements Runnable {
      */
     Server() {
         // Chat GUI display
-        chatGUI = new ChatGUI();
+        chatGUI = new ChatGUI("Server");
 
         // Threads creating
-        System.out.println("Server starting");
+        System.out.println("Server started");
         try {// Socket manager : port 10000
             gestSock = new ServerSocket(10000);
             for (int i = 0; i < nThread; i++) {
                 clientThread[i] = new Thread(this, String.valueOf(i));
                 clientThread[i].start();
             }
+            System.out.println("Info: "+nThread+" thread(s) created.");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -68,28 +72,30 @@ public class Server implements Runnable {
     public void run() {
         int idClientThread = Integer.parseInt(currentThread().getName());
         while (!endChat) {
-            System.out.println("Thread " + currentThread().getName() + " : reset.");
-            Socket socket;
+            // System.out.println("Thread " + currentThread().getName() + " : reset.");
             DataInputStream entree;
             DataOutputStream sortie;
             try {
-                socket = gestSock.accept(); // Waiting for connection
-                entree = new DataInputStream(socket.getInputStream());
-                sortie = new DataOutputStream(socket.getOutputStream());
+                sockets[idClientThread] = gestSock.accept(); // Waiting for connection
+                entree = new DataInputStream(sockets[idClientThread].getInputStream());
+                outs[idClientThread] = new DataOutputStream(sockets[idClientThread].getOutputStream());
                 // Data reading
-                String namePlayer = entree.readUTF();
-                System.out.println(namePlayer + " is connected");
+                String pseudoClient = entree.readUTF();
+                System.out.println(pseudoClient + " is connected");
 
                 // Send data : unique id of the client.
-                sortie.writeInt(idClientThread);
+                outs[idClientThread].writeInt(idClientThread);
 
                 // Read data from clients
                 String message = "";
                 while (!message.equals("end")) {
                     try {
                         message = entree.readUTF();
-                        chatGUI.addTextToChat("[" + namePlayer + "]: " + message);
-                        System.out.println("[" + namePlayer + "]: " + message);
+                        chatGUI.addTextToChat("[" + pseudoClient + "]: " + message);
+                        //System.out.println("[" + pseudoClient + "]: " + message);
+
+                        sendToAll(pseudoClient,message); // Broadcast to the others connected clients
+
                         if (message.equals("server-off")) {
                             message = "end";
                         }
@@ -98,37 +104,28 @@ public class Server implements Runnable {
                     }
                 }
                 // Clean close of the session
-                System.out.println(namePlayer + " has disconnected");
-                sortie.close();
+                System.out.println(pseudoClient + " has disconnected.");
+                outs[idClientThread].close();
                 entree.close();
-                socket.close();
+                sockets[idClientThread].close();
             } catch (IOException e) {// Quick cleaning
                 // throw new RuntimeException();
                 System.out.println("Failed to connect on thread: " + idClientThread + ",please retry.");
             }
         }
-        closeServer(idClientThread);
     }
 
-    /**
-     * Closes the entire threads and shuts down the server.
-     * 
-     * @param idCloserThread : id of closer thread
-     */
-    public synchronized void closeServer(int idCloserThread) {
-        endChat = true;
-        for (int i = 0; i < nThread; i++) {
-            if (i != idCloserThread) {
-                clientThread[i].interrupt();
+
+    public void sendToAll(String pseudo, String message){
+        String messageComplete = "[" + pseudo + "]: " + message;
+        for(int i=0; i<nThread; i++){
+            try {
+                if(outs[i] != null){
+                    outs[i].writeUTF(messageComplete);
+                }
+            } catch (IOException e) {
+                //throw new RuntimeException(e);
             }
         }
-        try {
-            gestSock.close();
-            System.out.println("Server shut down.");
-        } catch (IOException e) {
-            // throw new RuntimeException(e);
-        }
-
-        clientThread[idCloserThread] = null;
     }
 }
