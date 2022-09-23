@@ -1,3 +1,4 @@
+import javax.swing.*;
 import java.net.*;
 import java.io.*;
 import java.util.Scanner;
@@ -8,29 +9,114 @@ import java.util.Scanner;
  * 
  * @see Server
  */
-public class Client {
+public class Client implements Runnable {
+    /**
+     * Chat box.
+     */
+    private ChatGUI chatGUI;
+    /**
+     * Message to send.
+     */
+    private String message = "";
+    /**
+     * Input Stream for collecting data from server.
+     */
+    private DataInputStream in;
+    /**
+     * Thread which reads the incoming data of the server and displays it on the
+     * chat box.
+     */
+    private Thread chatReader = new Thread(this);
 
     /**
      * Default constructor for the client session.
      */
     Client() {
-        String address = "127.0.0.1";
+        setClientParameters();
+        //runClient("localhost", 10000,"Mohamed");
+    }
+
+    /**
+     * Sets the client parameters for the client session.
+     */
+    public void setClientParameters() {
+        JTextField addressField = new JTextField();
+        JTextField portField = new JTextField();
+        JTextField pseudoField = new JTextField();
+        Object[] message = {
+                "Ip Address:", addressField,
+                "Port:", portField,
+                "Pseudo:", pseudoField
+        };
+        int option = JOptionPane.showConfirmDialog(null, message, "Set connection to the server",
+                JOptionPane.OK_CANCEL_OPTION);
+        if (option == JOptionPane.OK_OPTION) { // Check if something is entered
+            String address = addressField.getText();
+            int port = Integer.valueOf(portField.getText());
+            String pseudo = pseudoField.getText();
+            runClient(address, port, pseudo);
+        } else {
+            JOptionPane.showMessageDialog(null, "Nothing selected. Retry later.",
+                    "ERROR", JOptionPane.WARNING_MESSAGE);
+            System.exit(0);
+        }
+    }
+
+    /**
+     * Runs the Client main program to connect with a server and send message.
+     * 
+     * @param args : useless paramter.
+     */
+    public static void main(String[] args) {
+        new Client();
+    }
+
+    /**
+     * Establishes a connection with the server and allows to send messages
+     * 
+     * @param address
+     * @param port
+     * @param pseudo
+     */
+    private void runClient(String address, int port, String pseudo) {
         Scanner scanner = new Scanner(System.in);
-        System.out.print("Client pseudo: ");
-        String nameDefault = scanner.nextLine();
+        // System.out.print("Client pseudo: ");
+        // pseudo = scanner.nextLine();
+
+        chatGUI = new ChatGUI(pseudo);
+
         int idClient;
         try {// Open sockets and streams
-            Socket sock = new Socket(address, 10000);
+            // Popup wait for connection code below
+            // JOptionPane pane = new JOptionPane("Trying to connect to " + address+" port:"+port,
+            //         JOptionPane.PLAIN_MESSAGE);
+            // // pane.showMessageDialog(null, "Trying to connect to " + address+" port:"+port,
+            //  //       "Establishing a connection", JOptionPane.INFORMATION_MESSAGE);
+            // JDialog dialog = pane.createDialog(null, "Establishing a connection");
+            // Socket sock = null;
+            // while (sock == null){
+            //     sock = new Socket(address, port);
+            //     dialog.setVisible(true);
+            // }
+            // dialog.setVisible(false);
+
+            System.out.print("Trying to connect to " + address+" port...");
+            Socket sock = new Socket(address, port);
+            System.out.println("done.");
+
             DataOutputStream out = new DataOutputStream(sock.getOutputStream());
-            DataInputStream in = new DataInputStream(sock.getInputStream());
+            in = new DataInputStream(sock.getInputStream());
 
             // Get information from the server
-            out.writeUTF(nameDefault);
+            out.writeUTF(pseudo);
             idClient = in.readInt(); // id of client : reception
-            System.out.println("Player n°: " + idClient);
+
+            System.out.println("Client id: " + idClient);
+
+            // Read message from the server
+            chatReader.start();
 
             // Send messages to the server
-            String message = "";
             while (!message.equals("end")) {
                 System.out.print("--> ");
                 message = scanner.nextLine();
@@ -50,17 +136,27 @@ public class Client {
             System.out.println(address + " unreachable.");
         } catch (IOException e) {
             // e.printStackTrace();
-            System.out.println("Server is currently offline: disconnection.");
+            System.out.println(address + " unreachable. Retry later.");
         }
+        chatReader = null;
+        System.exit(0);
     }
 
     /**
-     * Runs the Client main program to connect with a server and send message.
-     * 
-     * @param args : Specify the ip address and port for connection. (localhost:
-     *             127.0.0.1)
+     * Thread's method to read the incoming data and put in on the chat box GUI.
      */
-    public static void main(String[] args) {
-        new Client();
+    @Override
+    public void run() {
+        String messageReceived;
+        while (!message.equals("end")) {
+            try {
+                messageReceived = in.readUTF();
+                chatGUI.addTextToChat(messageReceived);
+            } catch (IOException e) { // Server off
+                chatGUI.addTextToChat("Server offline... disconnected.");
+                message = "end";
+            }
+        }
+        chatReader = null;
     }
 }
