@@ -1,12 +1,11 @@
-import javax.swing.*;
-import java.net.* ; // Socktse
-import java.io.* ; // Streams
-import javax.swing.JFrame;
+import java.net.*; // Socktse
+import java.io.*; // Streams
 
 import static java.lang.Thread.currentThread;
 
 /**
- * {@code Server} : Main class that creates a server for communication between multiple clients with multithreading.
+ * {@code Server} : Main class that creates a server for communication between
+ * multiple clients with multithreading.
  */
 public class Server implements Runnable {
     /**
@@ -32,7 +31,6 @@ public class Server implements Runnable {
      */
     private ChatGUI chatGUI;
 
-
     /**
      * Main Server program.
      */
@@ -44,25 +42,28 @@ public class Server implements Runnable {
     /**
      * Constructor for the server.
      */
-    Server(){
+    Server() {
         // Chat GUI display
         chatGUI = new ChatGUI();
 
         // Threads creating
-        System.out.println("Server starting") ;
+        System.out.println("Server starting");
         try {// Socket manager : port 10000
             gestSock = new ServerSocket(10000);
             for (int i = 0; i < nThread; i++) {
                 clientThread[i] = new Thread(this, String.valueOf(i));
                 clientThread[i].start();
             }
-        } catch (IOException e) {e.printStackTrace( );}
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         //
     }
 
-    public static void main(String args[]){
+    public static void main(String args[]) {
         new Server();
     }
+
     @Override
     public void run() {
         int idClientThread = Integer.parseInt(currentThread().getName());
@@ -72,7 +73,7 @@ public class Server implements Runnable {
             DataInputStream entree;
             DataOutputStream sortie;
             try {
-                socket = gestSock.accept();  // Waiting for connection
+                socket = gestSock.accept(); // Waiting for connection
                 entree = new DataInputStream(socket.getInputStream());
                 sortie = new DataOutputStream(socket.getOutputStream());
                 // Data reading
@@ -89,7 +90,7 @@ public class Server implements Runnable {
                         message = entree.readUTF();
                         chatGUI.addTextToChat("[" + namePlayer + "]: " + message);
                         System.out.println("[" + namePlayer + "]: " + message);
-                        if(message.equals("server-off")){
+                        if (message.equals("server-off")) {
                             message = "end";
                         }
                     } catch (EOFException | SocketException e) {
@@ -102,22 +103,22 @@ public class Server implements Runnable {
                 entree.close();
                 socket.close();
             } catch (IOException e) {// Quick cleaning
-                //throw new RuntimeException();
-                System.out.println("Failed to connect on thread: "+idClientThread+",please retry.");
+                // throw new RuntimeException();
+                System.out.println("Failed to connect on thread: " + idClientThread + ",please retry.");
             }
         }
         closeServer(idClientThread);
     }
 
-
     /**
      * Closes the entire threads and shuts down the server.
+     * 
      * @param idCloserThread : id of closer thread
      */
-    public synchronized void closeServer(int idCloserThread){
+    public synchronized void closeServer(int idCloserThread) {
         endChat = true;
         for (int i = 0; i < nThread; i++) {
-            if(i != idCloserThread){
+            if (i != idCloserThread) {
                 clientThread[i].interrupt();
             }
         }
@@ -125,7 +126,7 @@ public class Server implements Runnable {
             gestSock.close();
             System.out.println("Server shut down.");
         } catch (IOException e) {
-            //throw new RuntimeException(e);
+            // throw new RuntimeException(e);
         }
 
         clientThread[idCloserThread] = null;

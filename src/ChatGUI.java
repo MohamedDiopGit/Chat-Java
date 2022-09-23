@@ -1,11 +1,10 @@
 
 import javax.swing.*;
-import javax.swing.border.Border;
-import javax.swing.border.EmptyBorder;
 import java.awt.*;
 
 /**
- * {@code ChatGUI} : Class that displays the chat box for the server. Acts like a log terminal.
+ * {@code ChatGUI} : Class that displays the chat box for the server. Acts like
+ * a log terminal.
  */
 public class ChatGUI extends JFrame {
     /**
@@ -16,13 +15,13 @@ public class ChatGUI extends JFrame {
     /**
      * Constructor by default for the chat GUI
      */
-    ChatGUI(){
+    ChatGUI() {
         setTitle("Server logs");
         JLabel chatTitle = new JLabel("Server : Chat box", SwingConstants.CENTER);
         JLabel chatSubTitle = new JLabel("Message logs recording", SwingConstants.CENTER);
         textArea = new JTextArea(10, 20);
-        add(chatTitle,BorderLayout.NORTH);
-        add(chatSubTitle,BorderLayout.SOUTH);
+        add(chatTitle, BorderLayout.NORTH);
+        add(chatSubTitle, BorderLayout.SOUTH);
         JScrollPane sp = new JScrollPane(textArea);
 
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -32,10 +31,12 @@ public class ChatGUI extends JFrame {
     }
 
     /**
-     * It displays the message from a client to the server chat box, in the text area.
+     * It displays the message from a client to the server chat box, in the text
+     * area.
+     * 
      * @param message : {@code String} message to display.
      */
-    public synchronized void addTextToChat(String message){
-        textArea.append(message+"\n");
+    public synchronized void addTextToChat(String message) {
+        textArea.append(message + "\n");
     }
 }

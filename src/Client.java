@@ -1,9 +1,11 @@
-import java.net.* ;
-import java.io.* ;
+import java.net.*;
+import java.io.*;
 import java.util.Scanner;
 
 /**
- * {@code Client} : Client program that makes a connection with a {@code Server} via socket, referenced by ip address and port.
+ * {@code Client} : Client program that makes a connection with a {@code Server}
+ * via socket, referenced by ip address and port.
+ * 
  * @see Server
  */
 public class Client {
@@ -35,7 +37,7 @@ public class Client {
 
                 try {
                     out.writeUTF(message);
-                } catch (SocketException e) {  // Server off
+                } catch (SocketException e) { // Server off
                     System.out.println("Server offline...");
                     message = "end";
                 }
@@ -47,16 +49,18 @@ public class Client {
         } catch (UnknownHostException e) {
             System.out.println(address + " unreachable.");
         } catch (IOException e) {
-            //e.printStackTrace();
+            // e.printStackTrace();
             System.out.println("Server is currently offline: disconnection.");
         }
     }
 
     /**
-     *  Runs the Client main program to connect with a server and send message.
-     * @param args : Specify the ip address and port for connection. (localhost: 127.0.0.1)
+     * Runs the Client main program to connect with a server and send message.
+     * 
+     * @param args : Specify the ip address and port for connection. (localhost:
+     *             127.0.0.1)
      */
-    public static void main(String [] args ) {
+    public static void main(String[] args) {
         new Client();
     }
-} 
+}
