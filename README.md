@@ -9,4 +9,3 @@ Note that the port 10000 is selected by default in the "Server.java" code. Of co
 ![alt text](https://github.com/MohamedDiopGit/ChatGUI-Java/blob/e117e8925e087b75f7e4b4ded5fddfaba4cd0d5c/img/chat_example.png)  
 
 Developped on VSCode and Intellij IDEA Community 2022.2.2
-https://github.com/MohamedDiopGit/ChatGUI-Java/blob/e117e8925e087b75f7e4b4ded5fddfaba4cd0d5c/img/chat_example.png
