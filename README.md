@@ -6,6 +6,7 @@ Project: Chat GUI multithreads (Client and Server) project done in Java school c
 Just run RunnerClient.bat or RunnerServer.bat (before RunnerClient.bat to have a server online).  
 Note that the port 10000 is selected by default in the "Server.java" code. Of course you can change it.  
 
-![alt text](https://github.com/MohamedDiopGit/ChatGUI-Java/tree/master/img/chat_exampe.png?raw=true)  
+![alt text](https://github.com/MohamedDiopGit/ChatGUI-Java/blob/e117e8925e087b75f7e4b4ded5fddfaba4cd0d5c/img/chat_example.png)  
 
 Developped on VSCode and Intellij IDEA Community 2022.2.2
+https://github.com/MohamedDiopGit/ChatGUI-Java/blob/e117e8925e087b75f7e4b4ded5fddfaba4cd0d5c/img/chat_example.png
