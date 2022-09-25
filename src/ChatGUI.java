@@ -120,7 +120,6 @@ public class ChatGUI extends JFrame implements ActionListener {
         } catch (IOException e1) {
             JOptionPane.showMessageDialog(null, "Failed to send message : '" + message + "''.",
                     "ERROR", JOptionPane.WARNING_MESSAGE);
-            // System.out.println("failed to send message : '" + message+"''.");
             // e1.printStackTrace();
         }
         textInput.setText("");
