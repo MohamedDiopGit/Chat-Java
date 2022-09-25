@@ -1,7 +1,6 @@
 import javax.swing.*;
 import java.net.*;
 import java.io.*;
-import java.util.Scanner;
 
 /**
  * {@code Client} : Client program that makes a connection with a {@code Server}
@@ -33,7 +32,7 @@ public class Client implements Runnable {
      */
     Client() {
         setClientParameters();
-        //runClient("localhost", 10000,"Mohamed");
+        // runClient("localhost", 10000,"Mohamed");
     }
 
     /**
@@ -58,7 +57,6 @@ public class Client implements Runnable {
         } else {
             JOptionPane.showMessageDialog(null, "Nothing selected. Retry later.",
                     "ERROR", JOptionPane.WARNING_MESSAGE);
-            System.exit(0);
         }
     }
 
@@ -68,6 +66,7 @@ public class Client implements Runnable {
      * @param args : useless paramter.
      */
     public static void main(String[] args) {
+        System.out.println("Running client...");
         new Client();
     }
 
@@ -79,32 +78,17 @@ public class Client implements Runnable {
      * @param pseudo
      */
     private void runClient(String address, int port, String pseudo) {
-        Scanner scanner = new Scanner(System.in);
-        // System.out.print("Client pseudo: ");
-        // pseudo = scanner.nextLine();
-
         chatGUI = new ChatGUI(pseudo);
 
         int idClient;
-        try {// Open sockets and streams
-            // Popup wait for connection code below
-            // JOptionPane pane = new JOptionPane("Trying to connect to " + address+" port:"+port,
-            //         JOptionPane.PLAIN_MESSAGE);
-            // // pane.showMessageDialog(null, "Trying to connect to " + address+" port:"+port,
-            //  //       "Establishing a connection", JOptionPane.INFORMATION_MESSAGE);
-            // JDialog dialog = pane.createDialog(null, "Establishing a connection");
-            // Socket sock = null;
-            // while (sock == null){
-            //     sock = new Socket(address, port);
-            //     dialog.setVisible(true);
-            // }
-            // dialog.setVisible(false);
+        try {
 
-            System.out.print("Trying to connect to " + address+" port...");
+            System.out.print("Trying to connect to " + address + " port:" + port + "...");
             Socket sock = new Socket(address, port);
             System.out.println("done.");
 
             DataOutputStream out = new DataOutputStream(sock.getOutputStream());
+            chatGUI.setOutputStream(out);
             in = new DataInputStream(sock.getInputStream());
 
             // Get information from the server
@@ -116,30 +100,16 @@ public class Client implements Runnable {
             // Read message from the server
             chatReader.start();
 
-            // Send messages to the server
-            while (!message.equals("end")) {
-                System.out.print("--> ");
-                message = scanner.nextLine();
-
-                try {
-                    out.writeUTF(message);
-                } catch (SocketException e) { // Server off
-                    System.out.println("Server offline...");
-                    message = "end";
-                }
-            }
-            System.out.println("Chat closed.");
-            in.close(); // Close stream
-            out.close();
-            sock.close(); // Close socket
         } catch (UnknownHostException e) {
-            System.out.println(address + " unreachable.");
+            // System.out.println(" failed."); // Terminal output
+            JOptionPane.showMessageDialog(null, address + ":" + port + " unreachable. Retry later.",
+                    "ERROR", JOptionPane.WARNING_MESSAGE);
         } catch (IOException e) {
             // e.printStackTrace();
-            System.out.println(address + " unreachable. Retry later.");
+            // System.out.println(address + " unreachable. Retry later.");
+            JOptionPane.showMessageDialog(null, address + ":" + port + " unreachable. Retry later.",
+                    "ERROR", JOptionPane.WARNING_MESSAGE);
         }
-        chatReader = null;
-        System.exit(0);
     }
 
     /**
@@ -159,4 +129,5 @@ public class Client implements Runnable {
         }
         chatReader = null;
     }
+
 }
