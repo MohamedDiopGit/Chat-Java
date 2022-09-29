@@ -55,7 +55,7 @@ public class Client implements Runnable {
             String pseudo = pseudoField.getText();
             runClient(address, port, pseudo);
         } else {
-            JOptionPane.showMessageDialog(null, "Nothing selected. Retry later.",
+            JOptionPane.showMessageDialog(null, "Nothing selected. Press OK to exit.",
                     "ERROR", JOptionPane.WARNING_MESSAGE);
         }
     }
@@ -78,13 +78,10 @@ public class Client implements Runnable {
      * @param pseudo
      */
     private void runClient(String address, int port, String pseudo) {
-        chatGUI = new ChatGUI(pseudo);
-
         int idClient;
-        try {
-
-            System.out.print("Trying to connect to " + address + " port:" + port + "...");
-            Socket sock = new Socket(address, port);
+        System.out.print("Trying to connect to " + address + " port:" + port + "...");
+        try (Socket sock = new Socket(address, port)) {
+            chatGUI = new ChatGUI(pseudo);
             System.out.println("done.");
 
             DataOutputStream out = new DataOutputStream(sock.getOutputStream());
@@ -100,15 +97,11 @@ public class Client implements Runnable {
             // Read message from the server
             chatReader.start();
 
-        } catch (UnknownHostException e) {
-            // System.out.println(" failed."); // Terminal output
+        } catch (IOException e ) {
+
             JOptionPane.showMessageDialog(null, address + ":" + port + " unreachable. Retry later.",
                     "ERROR", JOptionPane.WARNING_MESSAGE);
-        } catch (IOException e) {
-            // e.printStackTrace();
-            // System.out.println(address + " unreachable. Retry later.");
-            JOptionPane.showMessageDialog(null, address + ":" + port + " unreachable. Retry later.",
-                    "ERROR", JOptionPane.WARNING_MESSAGE);
+            setClientParameters();
         }
     }
 

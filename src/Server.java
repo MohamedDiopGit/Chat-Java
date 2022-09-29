@@ -25,7 +25,7 @@ public class Server implements Runnable {
     /**
      * Total number of worker thread (maximum of clients) to be created.
      */
-    private static final int nThread = 3;
+    private static final int nThread = 1;
 
     /**
      * Array of the threads.
