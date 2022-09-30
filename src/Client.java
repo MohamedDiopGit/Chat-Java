@@ -80,20 +80,23 @@ public class Client implements Runnable {
     private void runClient(String address, int port, String pseudo) {
         int idClient;
         System.out.print("Trying to connect to " + address + " port:" + port + "...");
-        try (Socket sock = new Socket(address, port)) {
-            chatGUI = new ChatGUI(pseudo);
+        try{
+            Socket sock = new Socket(address, port);
             System.out.println("done.");
 
+            // Initialize the streams
             DataOutputStream out = new DataOutputStream(sock.getOutputStream());
-            chatGUI.setOutputStream(out);
             in = new DataInputStream(sock.getInputStream());
-
+      
             // Get information from the server
             out.writeUTF(pseudo);
             idClient = in.readInt(); // id of client : reception
-
-            System.out.println("Client id: " + idClient);
-
+            System.out.println("Client id: " + idClient);      
+            
+            // Initialize the message box
+            chatGUI = new ChatGUI(pseudo);
+            chatGUI.setOutputStream(out);
+            
             // Read message from the server
             chatReader.start();
 

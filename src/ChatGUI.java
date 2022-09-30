@@ -21,12 +21,12 @@ public class ChatGUI extends JFrame implements ActionListener {
      * Type text area for the chat box.
      */
     private JTextField textInput;
+    
+    private DataOutputStream out;
+    
     /**
      * Constructor by default for the chat GUI server.
      */
-
-    private DataOutputStream out;
-
     ChatGUI() {
         setTitle("Chat box");
 
@@ -38,6 +38,12 @@ public class ChatGUI extends JFrame implements ActionListener {
         JScrollPane scrollOutput = new JScrollPane(textOutput);
         DefaultCaret caret = (DefaultCaret) textOutput.getCaret();
         caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
+
+        JMenuBar menuBar = new JMenuBar();
+        JButton setThread = new JButton("Set Thread Limit");
+
+        menuBar.add(setThread);
+        setJMenuBar(menuBar);
 
         add(chatTitle, BorderLayout.NORTH);
         add(scrollOutput, BorderLayout.CENTER);
@@ -89,7 +95,7 @@ public class ChatGUI extends JFrame implements ActionListener {
     }
 
     /**
-     * Setter which take the outstream of client to server
+     * Setter which take the outstream of {@code Client} to {@code Server}.
      * 
      * @param outStream
      */

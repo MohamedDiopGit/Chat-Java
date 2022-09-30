@@ -25,7 +25,7 @@ public class Server implements Runnable {
     /**
      * Total number of worker thread (maximum of clients) to be created.
      */
-    private static final int nThread = 1;
+    private static final int nThread = 3;
 
     /**
      * Array of the threads.
@@ -90,12 +90,14 @@ public class Server implements Runnable {
                 // Data reading
                 String pseudoClient = entree.readUTF();
 
-                chatGUI.addTextToChat(getUtcDateTime() + " [" + pseudoClient + "]: " + " is connected");
-
                 // Send data : unique id of the client.
                 outs[idClientThread].writeInt(idClientThread);
-
-                // Read data from clients
+                
+                // Connection notification to all clients connected
+                chatGUI.addTextToChat(getUtcDateTime() + " [" + pseudoClient + "]: " + " is connected");
+                notifyConnectionToAll(idClientThread, pseudoClient, true);
+                
+                // Read data from client
                 String message = "";
                 while (!message.equals("end")) {
                     try {
@@ -111,9 +113,10 @@ public class Server implements Runnable {
                         message = "end";
                     }
                 }
-                // Clean close of the session
 
+                // Clean close of the session
                 chatGUI.addTextToChat(getUtcDateTime() + " [" + pseudoClient + "]: " + " has disconnected.");
+                notifyConnectionToAll(idClientThread, pseudoClient, false);
                 outs[idClientThread].close();
                 entree.close();
                 sockets[idClientThread].close();
@@ -124,12 +127,42 @@ public class Server implements Runnable {
         }
     }
 
+    /**
+     *  Sends a message to all the connected clients
+     * @param pseudoClient
+     * @param message
+     */
     public void sendToAll(String pseudoClient, String message) {
         String messageComplete = getUtcDateTime() + " [" + pseudoClient + "]: " + message;
-        for (int i = 0; i < nThread; i++) {
+        for (int id = 0; id < nThread; id++) {
             try {
-                if (outs[i] != null) {
-                    outs[i].writeUTF(messageComplete);
+                if (outs[id] != null) {
+                    outs[id].writeUTF(messageComplete);
+                }
+            } catch (IOException e) {
+                // throw new RuntimeException(e);
+            }
+        }
+    }
+
+    /**
+     * Notifies the connected client a specific client is connected
+     * @param idClientConnected
+     * @param pseudoClient
+     * @param message
+     */
+    public void notifyConnectionToAll(int idClientConnected, String pseudoClient, boolean isConnected) {
+        String messageComplete;
+        if(isConnected){
+            messageComplete = getUtcDateTime() + " [" + pseudoClient + "]: " + " is connected";
+        }
+        else{
+            messageComplete = getUtcDateTime() + " [" + pseudoClient + "]: " + " has disconnected";
+        }
+        for (int id = 0; id < nThread; id++) {
+            try {
+                if (outs[id] != null && (id != idClientConnected) ) {
+                    outs[id].writeUTF(messageComplete);
                 }
             } catch (IOException e) {
                 // throw new RuntimeException(e);
