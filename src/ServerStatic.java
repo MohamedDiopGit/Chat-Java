@@ -13,7 +13,7 @@ import static java.lang.Thread.currentThread;
  * {@code Server} : Main class that creates a server for communication between
  * multiple clients with multithreading.
  */
-public class Server implements Runnable {
+public class ServerStatic implements Runnable {
     /**
      * Boolean to know if the chat room is closed or not.
      */
@@ -55,13 +55,13 @@ public class Server implements Runnable {
      */
     public static void main(String args[]) {
         System.out.println("Running server...");
-        new Server();
+        new ServerStatic();
     }
 
     /**
      * Constructor for the server.
      */
-    Server() {
+    ServerStatic() {
         // Chat GUI display
         chatGUI = new ChatGUI(); // Default chat GUI : server side
 

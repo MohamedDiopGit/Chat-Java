@@ -1,12 +1,14 @@
+import javax.accessibility.AccessibleAction;
 import javax.swing.*;
 import java.net.*;
+import java.util.Random;
 import java.io.*;
 
 /**
  * {@code Client} : Client program that makes a connection with a {@code Server}
  * via socket, referenced by ip address and port.
  * 
- * @see Server
+ * @see ServerStatic
  */
 public class Client implements Runnable {
     /**
@@ -31,8 +33,10 @@ public class Client implements Runnable {
      * Default constructor for the client session.
      */
     Client() {
-        setClientParameters();
-        // runClient("localhost", 10000,"Mohamed");
+        // setClientParameters();
+        Random r = new Random();
+        int alea = r.nextInt((100 - 0) + 1) + 0;
+        runClient("localhost", 10000,"Client-"+alea);  // Dev usage
     }
 
     /**

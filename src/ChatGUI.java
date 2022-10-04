@@ -22,6 +22,9 @@ public class ChatGUI extends JFrame implements ActionListener {
      */
     private JTextField textInput;
     
+    /**
+     * Output stream to server.
+     */
     private DataOutputStream out;
     
     /**
@@ -39,11 +42,7 @@ public class ChatGUI extends JFrame implements ActionListener {
         DefaultCaret caret = (DefaultCaret) textOutput.getCaret();
         caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
 
-        JMenuBar menuBar = new JMenuBar();
-        JButton setThread = new JButton("Set Thread Limit");
-
-        menuBar.add(setThread);
-        setJMenuBar(menuBar);
+ 
 
         add(chatTitle, BorderLayout.NORTH);
         add(scrollOutput, BorderLayout.CENTER);
@@ -52,9 +51,10 @@ public class ChatGUI extends JFrame implements ActionListener {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // Shuts down the server when exit
         setSize(300, 220);
         pack();
-        setVisible(true);
+        setVisible(false);
 
     }
+
 
     /**
      * Constructor for the client session
@@ -95,7 +95,7 @@ public class ChatGUI extends JFrame implements ActionListener {
     }
 
     /**
-     * Setter which take the outstream of {@code Client} to {@code Server}.
+     * Client : Setter which take the outstream of {@code Client} to {@code Server}.
      * 
      * @param outStream
      */
@@ -114,7 +114,7 @@ public class ChatGUI extends JFrame implements ActionListener {
     }
 
     /**
-     * Sends the message typed to the server
+     * Client : Sends the message typed to the server
      * 
      * @param e
      */
