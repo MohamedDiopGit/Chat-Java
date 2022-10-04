@@ -1,10 +1,9 @@
 import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
-
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
+import java.util.List;
+import java.awt.*;
+import javax.swing.*;
 
 import java.io.*; // Streams
 import java.net.*;
@@ -13,9 +12,9 @@ import static java.lang.Thread.currentThread;
 
 /**
  * {@code Server} : Main class that creates a server for communication between
- * multiple clients with multithreading.
+ * multiple clients with dynamic multithreading.
  */
-public class ServerDynamic implements Runnable {
+public class ServerDynamic extends JFrame implements Runnable {
     /**
      * Server socket center.
      */
@@ -48,16 +47,19 @@ public class ServerDynamic implements Runnable {
         new ServerDynamic();
     }
 
-    private JMenu connectedClients = new JMenu("List : Connected Client");
+    private JMenu connectedClients = new JMenu("Connected clients");
 
     /**
      * Constructor for the server.
      */
     ServerDynamic() {
+
+        setTitle("Chat box");
+        setLayout(new FlowLayout());
+
         // Chat GUI display
         chatGUI = new ChatGUI(); // Default chat GUI : server side
-        // JMenuItem connectedClient = new JMenuItem("List : Connected Client");
-        
+        add(chatGUI);
         JMenuItem totalConnectedClient = new JMenuItem("Total connected clients");
         JMenu infoMenu = new JMenu("Show infos");
 
@@ -68,26 +70,23 @@ public class ServerDynamic implements Runnable {
 
         JMenuBar menuBar = new JMenuBar();
         menuBar.add(infoMenu);
-        chatGUI.setJMenuBar(menuBar);
-        chatGUI.setVisible(true);
+        setJMenuBar(menuBar);
+
+
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // Shuts down the server when exit
+        pack();
+        setVisible(true);
 
 
         // Threads creation
         try {// Socket manager : port 10000
             gestSock = new ServerSocket(10000);
-            // for (int i = 0; i < nThread; i++) {
-            //     Thread client = new Thread(this, String.valueOf(i));
-            //     client.start();
-            //     clients.add(client);
-            // }
             Thread client = new Thread(this);
             client.start();
 
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-
     }
 
     private void showTotalConnectedClients() {

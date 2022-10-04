@@ -10,7 +10,7 @@ import java.io.*;
  * 
  * @see ServerStatic
  */
-public class Client implements Runnable {
+public class Client extends JFrame implements Runnable  {
     /**
      * Chat box.
      */
@@ -37,6 +37,11 @@ public class Client implements Runnable {
         Random r = new Random();
         int alea = r.nextInt((100 - 0) + 1) + 0;
         runClient("localhost", 10000,"Client-"+alea);  // Dev usage
+
+
+        setTitle("Client-"+alea + ": " + "Chat box");
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // Shuts down the server when exit
+        // setSize(300, 220);
     }
 
     /**
@@ -103,6 +108,10 @@ public class Client implements Runnable {
             
             // Read message from the server
             chatReader.start();
+
+            add(chatGUI);
+            pack();
+            setVisible(true);
 
         } catch (IOException e ) {
 

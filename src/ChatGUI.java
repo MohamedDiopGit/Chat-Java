@@ -11,7 +11,7 @@ import java.io.IOException;
  * {@code ChatGUI} : Class that displays the chat box for the server. Acts like
  * a log terminal.
  */
-public class ChatGUI extends JFrame implements ActionListener {
+public class ChatGUI extends JPanel implements ActionListener {
     /**
      * Text area for the chat
      */
@@ -31,7 +31,7 @@ public class ChatGUI extends JFrame implements ActionListener {
      * Constructor by default for the chat GUI server.
      */
     ChatGUI() {
-        setTitle("Chat box");
+        
 
         JLabel chatTitle = new JLabel("Server : Chat box", SwingConstants.CENTER);
         JLabel chatSubTitle = new JLabel("Message logs recording", SwingConstants.CENTER);
@@ -42,16 +42,12 @@ public class ChatGUI extends JFrame implements ActionListener {
         DefaultCaret caret = (DefaultCaret) textOutput.getCaret();
         caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
 
- 
+        setLayout(new BorderLayout());
 
         add(chatTitle, BorderLayout.NORTH);
         add(scrollOutput, BorderLayout.CENTER);
         add(chatSubTitle, BorderLayout.SOUTH);
-
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // Shuts down the server when exit
-        setSize(300, 220);
-        pack();
-        setVisible(false);
+        
 
     }
 
@@ -62,35 +58,33 @@ public class ChatGUI extends JFrame implements ActionListener {
      * @param title
      */
     ChatGUI(String title) {
-        setTitle(title +" : Chat");
-
+    
         // Parameters text areas.
         int width = 30;
 
         JLabel chatTitle = new JLabel(title + " : Chat box", SwingConstants.CENTER);
-        JLabel chatSubTitle = new JLabel("Send a message here", SwingConstants.CENTER);
+        JLabel chatSubTitle = new JLabel("Send a message here  ", SwingConstants.CENTER);
         textOutput = new JTextArea(10, width);
         textInput = new JTextField(width);
         textInput.addActionListener((ActionListener) this);
         textOutput.setEditable(false);
 
-        JPanel panelSouth = new JPanel();
+        JPanel panelSouth = new JPanel(new BorderLayout());
 
         JScrollPane scrollOutput = new JScrollPane(textOutput);
         DefaultCaret caret = (DefaultCaret) textOutput.getCaret();
         caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
         JScrollPane scrollInput = new JScrollPane(textInput);
 
+
+        setLayout(new BorderLayout());
+        
+        panelSouth.add(scrollInput, BorderLayout.WEST);
+        panelSouth.add(chatSubTitle, BorderLayout.CENTER);
+
         add(chatTitle, BorderLayout.NORTH);
         add(scrollOutput, BorderLayout.CENTER);
-        panelSouth.add(scrollInput, SpringLayout.NORTH);
-        panelSouth.add(chatSubTitle, SpringLayout.SOUTH);
         add(panelSouth, BorderLayout.SOUTH);
-
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // Shuts down the server when exit
-        setSize(300, 220);
-        pack();
-        setVisible(true);
 
     }
 
